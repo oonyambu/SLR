@@ -1,0 +1,73 @@
+minimax <- function(scores, maximizer = TRUE, node = 0, 
+                    depth = log2(length(scores))){
+  cat('inside fun, maximizer', maximizer, 'node', node, 
+      'depth', depth,"\n")
+  if(depth == 0) return(scores[node+1])
+    val <-  c(minimax(scores,!maximizer, node*2, depth-1),
+              minimax(scores,!maximizer, node*2 + 1, depth-1))
+    cat("val", val)
+    if(maximizer)v<-max(val)
+
+    else v<-min(val)
+    cat(" results", v,"max?", maximizer, "\n")
+    v
+}
+
+scores <- c(3, 5, 2, 9, 12, 5, 23, 23)
+
+
+
+my_max <- function(scores, maximizer = TRUE){
+  depth = log2(length(scores))
+  fn <- c("min", "max")
+  g <- fn[rep(c(maximizer, !maximizer), length = depth)+1]
+  for(i in rev(g)){
+    scores <- tapply(scores, gl(length(scores)%/%2, 2), i)
+  }
+  scores
+}
+
+
+df %>%
+  pivot_longer()
+
+
+
+
+
+
+
+
+maximin <- function(scores, maximizer = TRUE,node = 0,
+                    depth = log2(length(scores))){
+  if(depth == 1) return(scores[node + 1])
+  if(maximizer) max(scores)
+  else min(scores)
+}
+
+
+df %>%
+  fill(family)%>%
+  group_by(family)%>%
+  fill(common:species, .direction = 'downup')%>%
+  group_by(across(family:species))%>%
+  reframe(across(everything(), ~if(any(!is.na(.x)))na.omit(.x)))
+
+
+fn<-\(i)1+4*i*(i+1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

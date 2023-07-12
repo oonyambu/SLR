@@ -1,0 +1,10 @@
+multiple_tests(Sepal.Length~Species, iris)
+# compare the first row to
+t.test(Sepal.Length~Species, iris, subset = Species %in% c('setosa', 'versicolor'))
+multiple_tests(cbind(Sepal.Length, Sepal.Width)~Species, iris)
+multiple_tests(Sepal.Length + Sepal.Width~Species, iris)
+multiple_tests(.~Species, iris)
+multiple_tests(hp~am+vs, mtcars)
+multiple_tests(qsec + hp~am+vs, mtcars, var_name = TRUE)
+multiple_tests(hp~am|vs, mtcars, var_name = TRUE)
+multiple_tests(.~Species, iris,cor.test)

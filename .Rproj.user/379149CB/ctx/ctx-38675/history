@@ -1,0 +1,512 @@
+read.table(text=input$Issue_Key, sep=".", fill=TRUE)
+read.table(text=chartr('.', ' ', input$Issue_Key), fill=TRUE)
+read.table(text=chartr('.', ' ', input$Issue_Key), fill=TRUE, skip = TRUE)
+read.table(text=chartr('.', ' ', input$Issue_Key), fill=TRUE, header = FALSE)
+toeplitz(1:10)
+toLatex(head(iris))
+toLatex
+?toLatex
+?rcompgen
+R_compiled_by()
+qnorm(-10, log.p=TRUE)
+?qnorm
+pnorm(0)
+pnorm(1)
+pnorm(1.96)
+qnorm(0.975)
+qnorm(1)
+qnorm(-1)
+tapply(iris, ~Species, mean)
+?tapply(iris, ~Species, mean)
+tapply(iris, Species~Sepal.Length, mean)
+?lme4::`lme4-package`
+search()
+detach("package:dplyr")
+a<- 1
+1+1
+multiple_tests <- function(formula, data, FUN = 't.test', ...,
+response = 'response',
+select = NULL, var_name = FALSE){
+FUN <- match.fun(FUN)
+fn <- function(x, g){
+f <- function(cmbs){
+nms <- chartr('.', '_', paste0(names(cmbs), collapse = ":"))
+cbind(grp = nms, my_tidy(FUN(cmbs[[1]], cmbs[[2]], ...)))
+}
+do.call(rbind, combn(split(x, g), 2, f, simplify = FALSE))
+}
+fm <- function(x){
+between <-  if(var_name)  Map(paste, args$between, x[args$between], sep='')
+else x[args$between]
+res <- lapply(x[args$response], fn, between)
+array2DF(structure(res, .Dim = length(res),
+dimnames = setNames(list(names(res)), response)))
+}
+args <- from_formula(formula, data)
+result <- by(data, args$groups, fm)
+v <- lapply(model.frame(args$groups, data), unique)
+if(grepl('WITHIN', names(v))) names(v) <- "WITHIN"
+res <- array2DF(structure(result, .Dim = lengths(v), dimnames = v))
+rownames(res) <- NULL
+res$WITHIN <- NULL
+subset(res,select = if(is.null(select))names(res)else match.arg(select, names(res),TRUE))
+}
+devtools:::test_active_file()
+View(multiple_tests)
+devtools:::test_active_file()
+devtools:::test_active_file()
+?SLR::multiple_tests()
+example("multiple_tests")
+example("SLR::multiple_tests")
+example(SLR::multiple_tests)
+example("mean")
+example
+example("multiple_tests", "SLR")
+find.package('base', lib.loc, verbose = verbose)
+lib.loc
+find.package('base', lib.loc, verbose = verbose)
+find.package('SLR', lib.loc, verbose = verbose)
+find.package('SLR',  verbose = verbose)
+index.search('multiple_tests', "D:/Work/SLR", firstOnly = TRUE)
+base:::index.search('multiple_tests', "D:/Work/SLR", firstOnly = TRUE)
+utils:::index.search('multiple_tests', "D:/Work/SLR", firstOnly = TRUE)
+utils:::index.search('mean', "D:/Programs/R/R-4.3.1/library/base", firstOnly = TRUE)
+load(""D:/Programs/R/R-4.3.1/library/base/help/base.rds"")
+load("D:/Programs/R/R-4.3.1/library/base/help/base.rds")
+load("D:/Programs/R/R-4.3.1/library/base/help/aliases.rds")
+load("D:/Programs/R/R-4.3.1/library/base/help/paths.rds")
+example("mean", verbose = TRUE)
+?DiceOptim::AEI()
+search()
+?mean
+devtools:::document()
+devtools:::document()
+devtools:::document()
+pkgbuild::check_build_tools(debug = TRUE)
+pkgbuild::check_build_tools(debug = TRUE,quiet = F)
+pkgbuild::check_build_tools(debug = TRUE,quiet = T)
+pkgbuild::check_build_tools
+library(SLR)
+SLR::hello()
+SLR::numDerivD(dnorm,c(1,1), 1)
+SLR::numDerivD(~sum(dnorm(x)),c(1,1), 1)
+SLR::numDerivD(~prod(dnorm(x)),c(1,1), 1)
+SLR::numDerivD(~prod(dnorm(1:10, x[1], x[2])),c(1,1), 1)
+SLR::numDerivD(~prod(dnorm(1:10, x[1], x[2],log = TRUE)),c(1,1), 1)
+SLR::numDerivD(~sum(dnorm(1:10, x[1], x[2],log = TRUE)),c(1,1), 1)
+SLR::numDerivD(~sum(dnorm(1:10, x[1], x[2],log = TRUE)),c(5,1), 1)
+SLR::numDerivD(~sum(dnorm(1:10, x,1,log = TRUE)), 5.5, 1)
+SLR::numDerivD(~sum(dnorm(1:10, x,1,log = TRUE)), 5.6, 1)
+SLR::numDerivD(~sum(dnorm(1:10, x,1,log = TRUE)), 5.7, 1)
+SLR::numDerivD(~sum(dnorm(1:10, x,1,log = TRUE)), 10, 1)
+SLR::numDerivD(~-sum(dnorm(1:10, x,1,log = TRUE)), 10, 1)
+SLR::numDerivD(~-sum(dnorm(1:10, x,1,log = TRUE)), -10, 1)
+SLR::numDerivD(~sum(dnorm(1:10, x,1,log = TRUE)), -10, 1)
+10*(-10-5.5)
+SLR::numDerivD(~sum(dnorm(1:10, x,2,log = TRUE)), -10, 1)
+SLR::numDerivD(~sum(dnorm(1:10, x[1],x[2],log = TRUE)), c(-5.5,1), 1)
+SLR::numDerivD(~sum(dnorm(1:10, x[1],x[2],log = TRUE)), c(5.5,1), 1)
+SLR::numDerivD(~sum(dnorm(1:10, x[1],x[2],log = TRUE)), c(5.5,2), 1)
+SLR::numDerivD(~sum(dnorm(1:10, x[1],x[2],log = TRUE)), c(5.5,3), 1)
+SLR::numDerivD(~sum(dnorm(1:10, x[1],x[2],log = TRUE)), c(5.5,5.5), 1)
+SLR::numDerivD(~sum(dnorm(1:10, x[1],x[2],log = TRUE)), c(5.5,-5.5), 1)
+SLR::numDerivD(~sum(dnorm(1:10, x[1],x[2],log = TRUE)), c(5.5,5.5), 1)
+file1 <- data.frame(coder=c("coder1", "coder1", "coder1", "coder1",
+"coder2","coder2",  "coder2", "coder2",
+"anchor", "anchor", "anchor", "anchor"),
+dur=c(120, 80, 60, 30, 257, 80, 55, 21, 130, 95, 60, 32))
+file2 <- data.frame(coder=c("coder1", "coder1", "coder1", "coder1",
+"coder2","coder2",  "coder2", "coder2",
+"anchor", "anchor", "anchor", "anchor"),
+dur=c(130, 95, 60, 32, 123, 80, 62, 14, 257, 80, 55, 21))
+file3 <- data.frame(coder=c("coder1", "coder1", "coder1", "coder1",
+"coder2","coder2",  "coder2", "coder2",
+"anchor", "anchor", "anchor", "anchor"),
+dur=c(32, 123, 80, 62, 130, 95, 60, 32, 123, 80, 62, 14))
+my_list <- list(file1, file2, file3)
+my_list
+names(my_list) <- paste0('file', 1:3)
+my_list
+dplyr::bind_rows(my_list)
+dplyr::bind_rows(my_list, .id = 'file')
+dat <- dplyr::bind_rows(my_list, .id = 'file')
+SLR::multiple_tests(dur~coder|file, dat)
+multiple_tests
+SLR::multiple_tests(dur~coder|file, dat)
+library(SLR)
+SLR::multiple_tests(dur~coder|file, dat)
+list.files()
+list.files('./R')
+list.files('./R', 'hell')
+list.files('./R', 'hell', full.names = T)
+list.files('./R', 'hell', full.names = T)|>file.remove()
+download.file('https://github.com/cran/betareg/blob/master/data/GasolineYield.rda')
+download.file('https://github.com/cran/betareg/blob/master/data/GasolineYield.rda','gasoline.rda')
+list.files()
+download.file('https://github.com/cran/betareg/blob/master/data/GasolineYield.rda','data/GasolineYield.rda')
+download.file('https://github.com/cran/betareg/blob/master/data/GasolineYield.rda','data/GasolineYield.rda')
+admission <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+save(admission, file = 'data/admission.rda')
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- setNames(coef(lm(plogis(y, log.p = TRUE)~X+0)),colnames(X))
+repeat{
+new <- optim(start, ll)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+}
+new
+}
+load('gasoline.rda')
+load('data/GasolineYield.rda')
+load('data/GasolineYield.rda')
+betareg(yield ~ batch + temp, data = GasolineYield)
+betaReg(yield ~ batch + temp, data = GasolineYield)
+data('data/GasolineYield.rda')
+data('GasolineYield')
+betaReg(yield ~ batch + temp, data = GasolineYield)
+debug(betaReg)
+betaReg(yield ~ batch + temp, data = GasolineYield)
+X
+y
+y
+start
+ncol(X)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(plogis(y, log.p = TRUE)~X+0)),colnames(X)),1)
+repeat{
+new <- optim(start, ll)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(plogis(y, log.p = TRUE)~X+0)),colnames(X)),1)
+repeat{
+new <- optim(start, ll)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+}
+new
+optim(start, ll)
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(plogis(y, log.p = TRUE)~X+0)),colnames(X)),1)
+# repeat{
+#   new <- optim(start, ll)
+#   if(norm(new[[1]] - start,"2") < 1e-8) break
+#   start <- new[[1]]
+# }
+# new
+optim(start, ll)
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y, log.p = TRUE)~X+0)),colnames(X)),1)
+# repeat{
+#   new <- optim(start, ll)
+#   if(norm(new[[1]] - start,"2") < 1e-8) break
+#   start <- new[[1]]
+# }
+# new
+optim(start, ll)
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(plogis(y, log.p = TRUE)~X+0)),colnames(X)),1)
+# repeat{
+#   new <- optim(start, ll)
+#   if(norm(new[[1]] - start,"2") < 1e-8) break
+#   start <- new[[1]]
+# }
+# new
+optim(start, ll)
+}
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y, log.p = TRUE)~X+0)),colnames(X)),1)
+# repeat{
+#   new <- optim(start, ll)
+#   if(norm(new[[1]] - start,"2") < 1e-8) break
+#   start <- new[[1]]
+# }
+# new
+optim(start, ll)
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+# repeat{
+#   new <- optim(start, ll)
+#   if(norm(new[[1]] - start,"2") < 1e-8) break
+#   start <- new[[1]]
+# }
+# new
+optim(start, ll)
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+repeat{
+new <- optim(start, ll)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+repeat{
+new <- optim(start, ll, method = 'BFGS')
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+repeat{
+new <- optim(start, ll)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+}
+new
+}
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+repeat{
+new <- optim(start, ll, \(x)numDerivD(ll, x, 1))
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+#repeat{
+new <- optim(start, ll, \(x)numDerivD(ll, x, 1))
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+#}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+#repeat{
+new <- optim(start, ll, \(x)numDerivD(ll, x, 1), hessian = \(x)numDerivD(ll, x, 2))
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+#}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+#repeat{
+new <- optim(start, ll, \(x)numDerivD(ll, x, 1), hessian = TRUE)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+#}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+#repeat{
+new <- optim(start, ll, \(x)SLR::numDerivD(ll, x, 1), hessian = TRUE)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+#}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+#repeat{
+new <- optim(start, ll, \(params)SLR::numDerivD(ll, params, 1), hessian = TRUE)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+#}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+#repeat{
+new <- optim(start, ll, \(x)SLR::numDerivD(~ll(x), params, 1), hessian = TRUE)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+#}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+#repeat{
+new <- optim(start, ll, \(x)SLR::numDerivD(~ll(x), x, 1), hessian = TRUE)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+#}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+X <- model.matrix(form, data)
+y <- get(form[[2]], data)
+p <- ncol(X) + 1
+ll <- function(params){
+mu <- plogis(X %*% head(params, -1))
+-sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+}
+start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+#repeat{
+new <- optim(start, ll, \(x)SLR::numDerivD(\(y)ll(y), x, 1), hessian = TRUE)
+if(norm(new[[1]] - start,"2") < 1e-8) break
+start <- new[[1]]
+#}
+new
+}
+betaReg(yield ~ batch + temp, data = GasolineYield)

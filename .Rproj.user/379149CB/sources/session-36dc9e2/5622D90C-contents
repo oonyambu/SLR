@@ -1,0 +1,4 @@
+my_list
+names(my_list) <- paste0('file', 1:3)
+dat <- dplyr::bind_rows(my_list, .id = 'file')
+SLR::multiple_tests(dur~coder|file, dat)

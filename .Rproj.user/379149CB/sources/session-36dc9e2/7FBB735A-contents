@@ -1,0 +1,231 @@
+
+betaReg <- function(form, data, alpha=0.4, maxit=50, o = TRUE){
+  X <- model.matrix(form, data)
+  y <- get(form[[2]], data)
+  p <- ncol(X) + 1
+  ll <- function(params){
+    mu <- plogis(X %*% head(params, -1))
+    -sum(dbeta(y, mu * params[p], (1-mu)*params[p], log =TRUE))
+  }
+  start <- c(setNames(coef(lm(qlogis(y)~X+0)),colnames(X)),1)
+  repeat{
+    new <- optim(start, ll)
+    if(norm(new[[1]] - start,"2") < 1e-8) break
+    start <- new[[1]]
+  }
+  new
+}
+
+
+logistic <- function(form, data){
+  X <- model.matrix(form, data)
+  y <- as.integer(as.factor(get(form[[2]], data))) - 1
+  ll <- function(par){
+    sum(dbinom(y, 1, plogis(X %*% par), TRUE))
+  }
+  start <- setNames(coef(lm(plogis(y, log.p = TRUE)~X+0)),colnames(X))
+  optim(start, ll, control =list(fnscale = -1))
+}
+
+# X <- model.matrix(admit~., admission)
+# y <- admission$admit
+#
+#
+#
+# X <- data.matrix(iris)
+# x <- scale(X[,-5], TRUE, F)
+# y <- X[,5]
+# means <- apply(x, 2, tapply, y, mean)
+# prior <- c(table(y))
+# Sb <- crossprod(sqrt(prior) * means)
+# Sw <- crossprod(x - means[y, ])
+# eig <- eigen(solve(Sw, Sb))
+# S <- eig[[2]][, abs(eig[[1]]) > 1e-5]*3
+# dm <- means %*% S
+#
+# p <- t(dm %*% t(S) %*% t(x) - 0.5 * rowSums(dm^2) + log(prior))
+#
+# prop.table(exp(p - p[cbind(seq(nrow(p)), max.col(p))]))
+#
+#
+#
+#
+# #S1 <- diag(1/sqrt(diag(var(x - means[y, ]))))
+#
+# fac <-  1/(nrow(x) - nrow(means))
+# a <- svd(sqrt(fac) * (x - means[y, ]), nu = 0L)
+# n <- nrow(x)
+# S1 <-  a$v %*% diag(1/a$d)
+# b <- svd(means %*% S1, nu = 0L)
+# ss <- S1 %*% b$v
+# sweep(ss, 2, sqrt(colSums(ss^2)), '/');sqrt(colSums(ss^2))
+#
+#
+#
+#
+#
+#
+# fac <-  1/(nrow(x) - nrow(means))
+# a <- svd( (x - means[y, ]), nu = 0L)
+# S1 <-  a$v %*% diag(1/a$d)
+# ss <- S1 %*% svd(means %*% S1, nu = 0L)$v
+# sweep(ss, 2, sqrt(colSums(ss^2)), '/');
+# sqrt(colSums(ss^2))
+#
+#
+#
+
+
+# m <- lm(qlogis(yield) ~ batch + temp, data = GasolineYield)
+# fit <- fitted(m)
+# yhat <- plogis(fit)
+# dlnk <- sapply(fit, \(i)numDerivD(\(x)plogis(x),i,1))^2*
+#   deviance(m)/diff(rev(dim(x)))
+
+
+
+lda <- function(form, data){
+  form <- eval(substitute(y~x+0, list(x=form[[3]], y=form[[2]])))
+  x <- scale(model.matrix(form, data), TRUE, FALSE)
+  y <- factor(get(form[[2]], data))
+  y_int <- as.integer(y)
+  prior <- c(table(y))
+  means <- tapply(x, list(rep(y, ncol(x)), col(x)), mean)
+  x_c <- x - means[y_int, ]
+  Sw <- crossprod(x_c)
+  Sb <- crossprod(means)
+  eig <- eigen(inverse(Sw, Sb))
+  scaling <- eig[[2]][, eig[[1]]>1e-8]
+  structure(list(prior = prior, means = means, scaling = scaling,
+       model = list(x = x, y = y, y_int = y_int, levels = levels(y))),
+       class = 'lda')
+}
+
+predict.lda <- function(object, newdata){
+  if(missing(newdata)) newdata <- object$model$x
+  new_x <- data.matrix(newdata) %*% object$scaling
+  dm <- object$means %*% object$scaling
+  res <- t(-0.5*rowSums(dm^2) + log(object$prior) + t(new_x %*%t(dm)))
+  posterior <- prop.table(exp(res), 1)
+  cls <-  object$model$levels[max.col(posterior)]
+  list(class = cls, prob = posterior, x= new_x)
+}
+
+
+
+
+# naiveBayes <- function(form, data){
+#
+#
+#   if(is.table(data))  {
+#     data <- data.frame(data)
+#     n_names <- attr(terms(form, data = data), "term.labels")
+#     n_names <- setdiff(n_names, 'Freq')
+#     mt_tabs <- function(name){
+#       vals <- xtabs(reformulate(c(
+#         deparse(form[[2]]),name), 'Freq'), data)
+#       prop.table(vals, 1)
+#     }
+#     apriori <- xtabs(reformulate(deparse(form[[2]]),
+#                                  'Freq'), data)
+#
+#     tables <- setNames(lapply(n_names, mt_tabs), n_names)
+#     res <- list(apriori = prop.table(apriori),
+#              tables = tables)
+#   }
+#   else{
+#     x <- data[attr(terms(form, data = data), "term.labels")]
+#     num_idx <- sapply(x, is.numeric)
+#     y <- factor(get(form[[2]], data))
+#     y_int <- as.integer(y)
+#     prior <- c(table(y))
+#     res <- list(apriori = prior,
+#                 isnumeric = num_idx,
+#                 response = list(levels = levels(y),
+#                                 y_int = y_int))
+#     if(any(num_idx)){
+#       x_num <- as.matrix(x[,num_idx])
+#       means <- tapply(x_num, list(rep(y, ncol(x)), col(x)), mean)
+#       sds <- tapply(x_num, list(rep(y, ncol(x)), col(x)), sd)
+#       res <- c(res,list(numeric = list(means=means, sds = sds)))
+#     }
+#     if(any(!num_idx)){
+#       m_tab <- function(i, name){
+#         tb <- prop.table(table(y, i), 1)
+#         nms <- c(deparse(form[[2]]), name)
+#         dimnames(tb) <- setNames(dimnames(tb), nms)
+#         tb
+#       }
+#       x_factors <- x[,!num_idx, drop = FALSE]
+#       pfactors <- Map(m_tab, x_factors, names(x_factors))
+#       res <- c(res, tables = list(pfactors))
+#     }
+#   }
+#      structure(res,  class = 'naiveBayes')
+# }
+#
+#
+# predict.naiveBayes <- function(object,newdata){
+#   if(missing(newdata)) newdata <- object$model$x
+#   newdata <- data.matrix(newdata)
+#
+# }
+
+
+
+naiveBayes <- function(x, y){
+  x <- as.matrix(x)
+  means <- apply(x, 2, tapply, y, mean)
+  sds <- apply(x, 2, tapply, y, sd)
+  prior <- c(table(y))
+  list(apriori = prior, means = means, sds = sds,
+       model = data.frame(x,y))
+}
+
+nB <- function(form, data, ...){
+  Yname <- as.character(form[[2]])
+  if(is.data.frame(data)){
+    model <- model.frame(form, data, ...)
+    y <- model.response(model)
+    x <- model[, labels(terms(model))]
+    naiveBayes(x, y)
+  }
+  else{
+    dat <- data.frame(data)
+    prior <- prop.table(c(xtabs(reformulate(Yname, 'Freq'), dat)))
+    nms <- setdiff(names(dimnames(data)), Yname)
+    mtabs <- function(name){
+      fm <- reformulate(c(Yname, name), 'Freq')
+      prop.table(xtabs(fm, dat), 1)
+    }
+    list(apriori = prior, tables=setNames(lapply(nms, mtabs), nms),
+         model = data)
+  }
+}
+
+prd <- function(object, newdata){
+
+  xi <- rep(seq_along(y), each = length(prior))
+  mi <- rep(seq_along(prior), length(y))
+  pbs <- rowSums(dnorm(x[xi,], means[mi,], sds[mi, ], log = TRUE))
+  pbs <- pbs + log(prior)[mi]
+  pb <- t(matrix(ave(pbs, xi, FUN=\(w)w-max(w)), length(prior)))
+  prop.table(exp(pb), 1)
+}
+
+
+
+#Linear Regression
+
+linearRegression <- function(form, data){
+  X <- model.matrix(form, data)
+  y <- model.response(model.frame(form, data))
+  res <- inverse(crossprod(X), crossprod(X, y))
+  structure(list(form = form, coefficients = res),
+            class = 'linearRegression')
+}
+
+predict.linearRegression <- function(object, newdata){
+  newdata <- model.matrix(object$form, newdata)
+  newdata %*%coef(object)
+}

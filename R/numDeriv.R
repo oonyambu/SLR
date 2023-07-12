@@ -1,0 +1,69 @@
+nds <- function(f, x, u){
+  coefs <-  c(1/12, -2/3,  2/3 ,-1/12)
+  p <- c(-2, -1, 1,  2)
+  h <-  1e-3
+  vs <- c(f(x-2*h*u), f(x-h*u), f(x+h*u), f(x+2*h*u))
+  c(vs %*% coefs/h)
+}
+
+numDeriv_1d <- function(f, x, d, p = 4){
+  if(d>=4)warning("numeric derivative is unstable for order >= 4")
+  coefs <- num_diff_coeffs(d, if(d<p)p else d+1)
+  h <- 1e-2
+  tp <- c(f(x+coefs$p*h)%*%coefs$coefs)
+  tp/h^d
+}
+
+numD_coeffs <- function(d, p){
+  if(missing(p)) p <- d + 1 + d%%2
+  if(length(p) == 1 & p>1){
+    p <- c(scale(seq_len(p), TRUE, FALSE))
+    p <- ceiling(abs(p))*sign(p)
+  }
+  stopifnot(d < length(p))
+  v <- numeric(length(p))
+  v[d+1] <- factorial(d)
+  list(coefs = solve(t(outer(p, seq_along(p)-1, "^")), v),
+       p=p)
+}
+
+
+
+numD_u <- function(fun, x, u){
+  fn <- call("function", setNames(pairlist(substitute()), "x"),
+          fun2call(fun))
+  for(i in seq_along(u)){
+    fn[[3]] <- substitute(nds(fn, x, u),
+                    list(fn = as.call(fn),u = u[[i]]))
+  }
+  eval(fn[[3]])
+}
+
+#'
+#' @export
+numDerivD <- function(f, x, degree){
+  n_vars <- length(x)
+  nms <- make_names(x)
+  mt <- as.matrix(expand.grid(rep(list(seq_along(x)),degree)))
+  mt1 <- as.data.frame(array(nms[mt], dim(mt)))
+  v <- diag(n_vars)
+  idx <- match(data.frame(apply(mt, 1, sort)), data.frame(t(mt)))
+  if(all(is.na(idx))) idx <- seq_len(nrow(mt))
+  res <- c()
+  for(i in unique(idx))
+    res[as.character(i)] <- numD_u(f, x, lapply(mt[i,], \(y)v[,y]))
+
+  res <- xtabs(res~.,cbind(mt1, res = round(res[as.character(idx)], 5)))
+  #as.matrix(res)
+  res
+}
+
+make_names <- function(x){
+  nms <- names(x)
+  if(is.null(nms))
+    nms <- paste0("x", seq_along(x))
+  if(any(idx <- !nzchar(nms)))
+    nms[idx] <- paste0('x', which(idx))
+  nms
+}
+

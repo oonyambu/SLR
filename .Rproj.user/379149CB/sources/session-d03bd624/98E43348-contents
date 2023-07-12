@@ -1,0 +1,133 @@
+#' Integrate a D-dimensional function
+#'
+#' Used to integrate a function that takes in
+#' d parameters and outputs a single value.
+#'
+#' @param fun The function or a one sided formula to be integrated
+#' @param limits The limits of the integration. Should be
+#' a named list starting from the outermost integral to the innermost.
+#' Use `quote` or `substitute` to express the limits that vary
+#'
+#' @return the value of the integral
+#'
+#' @export
+#'
+#' @examples
+#' IntegrateD(function(x)1/x,list(x = c(1, 10))) # log(10)
+#' IntegrateD(~x^2+y^2, list(x = c(0, 1), y = c(0, quote(x))))
+#' IntegrateD(\(x,y,z)1,
+#'         list(x = c(0,1), y = c(0, quote(x)), z = c(0, quote(1+x+y))))
+#'
+#' ## The normal distribution function
+#' fun <- function(x) 1/(2*pi)^(length(x)/2)*exp(-sum(x^2)/2)
+#' # 1-d
+#' all.equal(fun(0.5), dnorm(0.5))
+#' all.equal(IntegrateD(~fun(x), list(x=c(-Inf,0)))[[1]], pnorm(0))
+#' # 2-d
+#' IntegrateD(~fun(c(x,y)), list(x = c(-Inf, 0), y = c(-Inf, 0))) #0.25
+#' IntegrateD(~fun(c(x,y)), list(x = c(-Inf, 0), y = c(quote(x), 0))) #0.25
+#' #Note that the last example cannot be done using `mvtnorm::pmvnorm`
+#'
+
+
+IntegrateD <- function(f, limits){
+  limits <- rev(limits)
+  nms <- names(limits)
+  fn <- c(as.name("function"), "", fun2call(f))
+  for(i in seq_along(limits)){
+    fn[[2]] <- setNames(pairlist(substitute()), nms[i])
+    vals <- list(fn = as.call(fn),
+                 low = limits[[i]][[1]], up = limits[[i]][[2]])
+    fn[[3]] <- substitute(integrate(Vectorize(fn), low, up)[[1]], env = vals)
+  }
+  eval(fn[[3:2]])
+}
+
+checknames <- function(f, nms){
+  if(any(is.null(nms), !nzchar(nms)))
+    stop('all limits must be named')
+  if(!all(nms %in% names(formals(f))))
+    stop("some of the limit names do not match the function parameters")
+}
+
+fun2call <- function(f){
+  UseMethod('fun2call')
+}
+
+fun2call.function <- function(f){
+  e <- substitute(f)
+  fm <- formals(f)
+  fm <- Map(\(x,y) if(is.name(x)) as.name(y) else x, fm, names(fm))
+  as.call(c(e, if(length(fm))fm else quote(x)))
+}
+fun2call.formula <- function(f){
+  # fm_nms <- all.vars(f)
+  # p <- as.pairlist(setNames(lapply(fm_nms, as.name), fm_nms))
+  # e <- as.call(list(as.name("function"), p, f[[2]]))
+  # as.call(c(e, p))
+  f[[2]]
+}
+
+my_dmvnorm <- function(x, mu = c(0,0), sig = diag(2)){
+  p <- ncol(sig)
+  dec <- chol(sig)
+  tmp <- backsolve(dec, t(x) - mu, transpose = TRUE)
+  rss <- colSums(tmp^2)
+   exp(-sum(log(diag(dec))) - 0.5 * p * log(2 * pi) - 0.5 * rss)
+}
+
+my_pmvnorm <- function(lower = -Inf, upper = Inf, mu = rep(0,length(lower)),
+                       sig = diag(length(lower))){
+  lms <- data.frame(rbind(lower, upper))
+  nms <- names(lms)
+  f <- function(){
+    e <- match.call()
+    e[[1]] <- as.name('cbind')
+    my_dmvnorm(eval(e), mu, sig)
+  }
+  formals(f) <- setNames(rep(list(substitute()), length(nms)), nms)
+  IntegrateD(f, lms)
+
+}
+
+
+profit <- function(init, final, quant, times,cost = NULL, short = FALSE){
+  if(is.null(cost))
+    cost <- init/times * quant
+  prof <- (final - init)*quant*(-1)^short
+  cat("Initial:", init,
+      "\tFinal:", final,
+      "\tLeverage:", times,
+      "\tQuantity:", quant, "\n")
+  cat('\tCost: $', cost, "\tProfit: $", prof,"\tROI: ",
+      round(prof/cost*100, 2), "%", sep="", "\n")
+}
+
+
+
+
+
+
+
+IntegrateD(function(x)1/x,list(x = c(1, 10))) # log(10)
+IntegrateD(~x^2+y^2, list(x = c(0, 1), y = c(0, quote(x))))
+IntegrateD(\(x,y,z)1,
+        list(x = c(0,1), y = c(0, quote(x)), z = c(0, quote(1+x+y))))
+
+## The normal distribution function
+fun <- function(x) 1/(2*pi)^(length(x)/2)*exp(-sum(x^2)/2)
+# 1-d
+all.equal(fun(0.5), dnorm(0.5))
+all.equal(IntegrateD(~fun(x), list(x=c(-Inf,0)))[[1]], pnorm(0))
+# 2-d
+IntegrateD(~fun(c(x,y)), list(x = c(-Inf, 0), y = c(-Inf, 0))) #0.25
+IntegrateD(~fun(c(x,y)), list(x = c(-Inf, 0), y = c(quote(x), 0))) #0.25
+#Note that the last example cannot be done using `mvtnorm::pmvnorm`
+
+
+
+
+
+
+
+

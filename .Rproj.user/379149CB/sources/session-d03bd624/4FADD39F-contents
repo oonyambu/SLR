@@ -1,0 +1,32 @@
+multiple_tests <- function(formula, data, FUN = 't.test', ...,
+                           response = 'response',
+                           select = NULL, var_name = FALSE){
+  FUN <- match.fun(FUN)
+  fn <- function(x, g){
+    f <- function(cmbs){
+      nms <- chartr('.', '_', paste0(names(cmbs), collapse = ":"))
+      cbind(grp = nms, my_tidy(FUN(cmbs[[1]], cmbs[[2]], ...)))
+    }
+    do.call(rbind, combn(split(x, g), 2, f, simplify = FALSE))
+    
+  }
+  
+  fm <- function(x){
+    between <-  if(var_name)  Map(paste, args$between, x[args$between], sep='')
+    else x[args$between]
+    res <- lapply(x[args$response], fn, between)
+    
+    array2DF(structure(res, .Dim = length(res),
+                       dimnames = setNames(list(names(res)), response)))
+  }
+  args <- from_formula(formula, data)
+  result <- by(data, args$groups, fm)
+  
+  v <- lapply(model.frame(args$groups, data), unique)
+  if(grepl('WITHIN', names(v))) names(v) <- "WITHIN"
+  res <- array2DF(structure(result, .Dim = lengths(v), dimnames = v))
+  rownames(res) <- NULL
+  res$WITHIN <- NULL
+  subset(res,select = if(is.null(select))names(res)else match.arg(select, names(res),TRUE))
+}
+

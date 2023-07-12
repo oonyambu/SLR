@@ -1,0 +1,13 @@
+minimize <- function(f,x0, tol = 1e-6, maxit = 5, alpha=0.1){
+  count <- 1
+  repeat {
+    grad <-  numDerivD(f, x0, 1)
+    x <- x0 - alpha*inverse(numDerivD(f,x0,2), grad);
+    if(count > maxit | sum(grad^2)<tol) break
+    count <- count + 1
+    x0 <- x
+  }
+  list(par = unname(x0), value = f(unname(x0)), iter = count)
+}
+
+
