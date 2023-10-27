@@ -120,6 +120,7 @@ my_tidy <- function(x){
       data.frame(t(setNames(i, nms)))
     }
   }
+  x <- Filter(Negate(is.null), x)
   do.call(cbind,  Map(fn, unname(x), names(x)))
 }
 
