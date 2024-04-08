@@ -32,40 +32,82 @@
 #' multiple_tests(.~Species, iris,cor.test)
 #'
 
-multiple_tests <- function(formula, data, FUN = 't.test', ...,
-                           response = 'response',
-                           select = NULL, var_name = FALSE){
+
+multiple_tests <- function (formula, data, FUN = "t.test", ..., response = "response", 
+                                           select = NULL, var_name = FALSE,wide = FALSE) {
+  UseMethod('multiple_tests')
+}
+
+multiple_tests.formula <- function (formula, data, FUN = "t.test", ..., response = "response", 
+          select = NULL, var_name = FALSE,wide = FALSE) {
   FUN <- match.fun(FUN)
-  fn <- function(x, g){
-    f <- function(cmbs){
-      nms <- chartr('.', '_', paste0(names(cmbs), collapse = ":"))
-      cbind(grp = nms, my_tidy(FUN(cmbs[[1]], cmbs[[2]], ...)))
+  fn <- function(x, g) {
+    f <- function(cmbs) {
+      nms <- chartr(".", "_", paste0(names(cmbs), collapse = ":"))
+      cbind(grp = nms, my_tidy(FUN(cmbs[[1]], cmbs[[2]], 
+                                   ...)))
     }
     do.call(rbind, combn(split(x, g), 2, f, simplify = FALSE))
-
   }
-
-  fm <- function(x){
-    between <-  if(var_name)  Map(paste, args$between, x[args$between], sep='')
+  fm <- function(x) {
+    between <- if (var_name) 
+      Map(paste, args$between, x[args$between], sep = "")
     else x[args$between]
     res <- lapply(x[args$response], fn, between)
-
-    array2DF(structure(res, .Dim = length(res),
-                       dimnames = setNames(list(names(res)), response)))
+    array2DF(structure(res, .Dim = length(res), dimnames = setNames(list(names(res)), 
+                                                                    response)))
   }
   args <- from_formula(formula, data)
   result <- by(data, args$groups, fm)
-
   v <- lapply(model.frame(args$groups, data), unique)
-  if(grepl('WITHIN', names(v))) names(v) <- "WITHIN"
+  if (any(grepl("WITHIN", names(v))))
+    names(v) <- "WITHIN"
   res <- array2DF(structure(result, .Dim = lengths(v), dimnames = v))
   rownames(res) <- NULL
   res$WITHIN <- NULL
   res$data.name <- NULL
-  subset(res,select = if(is.null(select))names(res)else match.arg(select, names(res),TRUE))
+  id_vars <- c('response', all.vars(args$groups))
+  all_nms <- names(res)
+  if (!is.null(select)) all_nms <- match.arg(c(id_vars,'grp',select), all_nms, TRUE)
+  res <- res[,all_nms]
+  if(wide) reshape(res, v.names = setdiff(all_nms,c(id_vars, 'grp')), 
+                   timevar = 'grp', idvar = id_vars, sep = '_',
+                   direction = 'wide')
+  else res
 }
 
-
+# multiple_tests <- function(formula, data, FUN = 't.test', ...,
+#                            response = 'response',
+#                            select = NULL, var_name = FALSE){
+#   FUN <- match.fun(FUN)
+#   fn <- function(x, g){
+#     f <- function(cmbs){
+#       nms <- chartr('.', '_', paste0(names(cmbs), collapse = ":"))
+#       cbind(grp = nms, my_tidy(FUN(cmbs[[1]], cmbs[[2]], ...)))
+#     }
+#     do.call(rbind, combn(split(x, g), 2, f, simplify = FALSE))
+#     
+#   }
+#   
+#   fm <- function(x){
+#     between <-  if(var_name)  Map(paste, args$between, x[args$between], sep='')
+#     else x[args$between]
+#     res <- lapply(x[args$response], fn, between)
+#     
+#     array2DF(structure(res, .Dim = length(res),
+#                        dimnames = setNames(list(names(res)), response)))
+#   }
+#   args <- from_formula(formula, data)
+#   result <- by(data, args$groups, fm)
+#   
+#   v <- lapply(model.frame(args$groups, data), unique)
+#   if(grepl('WITHIN', names(v))) names(v) <- "WITHIN"
+#   res <- array2DF(structure(result, .Dim = lengths(v), dimnames = v))
+#   rownames(res) <- NULL
+#   res$WITHIN <- NULL
+#   res$data.name <- NULL
+#   subset(res,select = if(is.null(select))names(res)else match.arg(select, names(res),TRUE))
+# }
 
 from_formula <- function(form, data){
   if(!is.data.frame(data))
@@ -110,6 +152,7 @@ searchsorted <- function(x, vec){
 }
 
 my_tidy <- function(x){
+  if(is.atomic(x)) return(data.frame(values = t(x)))
   if(!is.list(x)) return(x)
   fn <- function(i,j){
     if(length(i) == 1)
