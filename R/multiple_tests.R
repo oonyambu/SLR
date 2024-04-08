@@ -14,6 +14,7 @@
 #' @param var_name logical indicating whether the factor name should be
 #' included when generating the combinations
 #' @param select the quantity needed from the test carried out eg. p.value etc
+#' @param wide logical indicating whether to return a long table or a wide table
 #' @return a tidy dataframe containing all the quantities from the mutliple
 #' tests
 #'
@@ -66,7 +67,7 @@ multiple_tests.formula <- function (formula, data, FUN = "t.test", ..., response
   rownames(res) <- NULL
   res$WITHIN <- NULL
   res$data.name <- NULL
-  id_vars <- c('response', all.vars(args$groups))
+  id_vars <- c(response, all.vars(args$groups))
   all_nms <- names(res)
   if (!is.null(select)) all_nms <- match.arg(c(id_vars,'grp',select), all_nms, TRUE)
   res <- res[,all_nms]
