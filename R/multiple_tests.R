@@ -67,7 +67,7 @@ multiple_tests.formula <- function (formula, data, FUN = "t.test", ..., response
   res$WITHIN <- NULL
   res$data.name <- NULL
   all_nms <- names(res)
-  id_vars <- intersect(c(response, all.vars(args$groups), all_nms)
+  id_vars <- intersect(c(response, all.vars(args$groups)), all_nms)
   if (!is.null(select)) all_nms <- match.arg(c(id_vars,'grp',select), all_nms, TRUE)
   res <- res[,all_nms]
   if(wide) reshape(res, v.names = setdiff(all_nms,c(id_vars, 'grp')), 
