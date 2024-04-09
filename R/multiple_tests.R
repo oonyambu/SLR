@@ -31,8 +31,6 @@
 #' multiple_tests(qsec + hp~am+vs, mtcars, var_name = TRUE)
 #' multiple_tests(hp~am|vs, mtcars, var_name = TRUE)
 #' multiple_tests(.~Species, iris,cor.test)
-#'
-
 
 multiple_tests <- function (formula, data, FUN = "t.test", ..., response = "response", 
                                            select = NULL, var_name = FALSE,wide = FALSE) {
