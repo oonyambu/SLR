@@ -33,10 +33,11 @@
 #' multiple_tests(.~Species, iris,cor.test)
 
 multiple_tests <- function (formula, data, FUN = "t.test", ..., response = "response", 
-                                           select = NULL, var_name = FALSE,wide = FALSE) {
+                                           select = NULL, var_name = FALSE, wide = FALSE) {
   UseMethod('multiple_tests')
 }
 
+#' @export
 multiple_tests.formula <- function (formula, data, FUN = "t.test", ..., response = "response", 
           select = NULL, var_name = FALSE,wide = FALSE) {
   FUN <- match.fun(FUN)
