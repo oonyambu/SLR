@@ -1,3 +1,13 @@
+#' Obtain SVD from scratch
+#'
+#' @param A matrix to be decomposed
+#' @return list of Σ,U,V
+#' @export
+#'
+#' @examples
+#'  A <- matrix(1:15, 3)
+#' my_SVD(A)
+
 
 
 my_SVD <- function(A){
